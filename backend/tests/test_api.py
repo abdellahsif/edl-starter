@@ -129,9 +129,39 @@ def test_delete_task(client):
 
     Astuce : Regardez test_get_task_by_id pour voir comment créer et obtenir l'ID
     """
-    # TODO : Écrivez votre test ici !
-    pass
+   
+    # arrange
+    new_task = {
+        "title": "Tâche à supprimer",
+        "description": "Ceci est une tâche à supprimer"
+    }
+    create_response = client.post("/tasks", json=new_task)
+    task_id = create_response.json()["id"]
 
+    # act
+    delete_response = client.delete(f"/tasks/{task_id}")
+
+    # assert
+    assert delete_response.status_code == 204
+    get_response = client.get(f"/tasks/{task_id}")
+    assert get_response.status_code == 404
+
+
+def test_delete_nonexistent_task_returns_404(client):
+    """Deleting a task that doesn't exist should return 404."""
+    # Votre code ici
+    # 1. Essayer de supprimer une tâche avec un ID qui n'existe pas (ex: 9999)
+    # 2. Vérifier que ça retourne 404
+    # 3. Vérifier le message d'erreur contient "not found"
+
+    #ARRANGE
+    nonexistent_task_id = 9999
+    #ACT
+    delete_response = client.delete(f"/tasks/{nonexistent_task_id}")
+
+    # ASSERT
+    assert delete_response.status_code == 404
+    assert "not found" in delete_response.json()["detail"]
 
 # EXERCICE 2 : Écrire un test pour METTRE À JOUR une tâche
 # Pattern : Créer → Mettre à jour → Vérifier les changements
@@ -148,8 +178,22 @@ def test_update_task(client):
 
     Astuce : Les requêtes PUT sont comme les POST, mais elles modifient des données existantes
     """
-    # TODO : Écrivez votre test ici !
-    pass
+    # ARRANGE
+    new_task = {
+        "title": "Titre Original",
+        "description": "Description initiale"
+    }
+    create_response = client.post("/tasks", json=new_task)
+    task_id = create_response.json()["id"]
+
+    # ACT
+    update_response = client.put(f"/tasks/{task_id}", json={"title": "Nouveau Titre"})
+
+    # ASSERT
+    assert update_response.status_code == 200
+    updated_task = update_response.json()
+    assert updated_task["title"] == "Nouveau Titre"
+   
 
 
 # EXERCICE 3 : Tester la validation - un titre vide devrait échouer
@@ -179,8 +223,19 @@ def test_update_task_with_invalid_priority(client):
 
     Rappel : Les priorités valides sont "low", "medium", "high" (voir TaskPriority dans app.py)
     """
-    # TODO : Écrivez votre test ici !
-    pass
+    # ARRANGE
+    new_task = {
+        "title": "Tâche pour test de priorité",
+        "description": "Description"
+    }
+    create_response = client.post("/tasks", json=new_task)
+    task_id = create_response.json()["id"]
+
+    # ACT
+    update_response = client.put(f"/tasks/{task_id}", json={"priority": "urgent"})
+
+    # ASSERT
+    assert update_response.status_code == 422
 
 
 # EXERCICE 5 : Tester l'erreur 404
@@ -213,7 +268,30 @@ def test_filter_tasks_by_status(client):
     # TODO : Écrivez votre test ici !
     pass
 
+# Exercice 5 : Écrire un Test de Filtrage
+def test_filter_by_multiple_criteria(client):
+    """Filtering by status AND priority should work."""
+    # : Votre code ici
+    # 1. Créer 3 tâches avec différents status et priority
+    # 2. Filtrer avec GET /tasks?status=todo&priority=high
+    # 3. Vérifier qu'on reçoit seulement les bonnes tâches
+    # ARRANGE
+    task1 = {"title": "Tâche 1", "status": "todo", "priority": "high"}
+    task2 = {"title": "Tâche 2", "status": "done", "priority": "low"}
+    task3 = {"title": "Tâche 3", "status": "todo", "priority": "low"}
+    client.post("/tasks", json=task1)
+    client.post("/tasks", json=task2)
+    client.post("/tasks", json=task3)
 
+    # ACT
+    response = client.get("/tasks?status=todo&priority=high")
+
+    # ASSERT
+    assert response.status_code == 200
+    tasks = response.json()
+    assert len(tasks) == 1
+    assert tasks[0]["title"] == "Tâche 1"
+    
 # BONUS 2 : Tester la mise à jour d'un seul champ
 def test_update_only_status(client):
     """
