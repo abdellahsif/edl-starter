@@ -365,7 +365,10 @@ RAPPELEZ-VOUS :
 - La base de données est automatiquement nettoyée avant/après chaque test
 - Les tests doivent être indépendants (ne pas dépendre d'autres tests)
 """
-
+def test_health_check(client):
+    response = client.get("/health")
+    assert response.status_code == 200
+    assert response.json()["status"] == "BROKEN"  # ❌ Faux exprès !
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
