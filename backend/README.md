@@ -1,9 +1,5 @@
 # TaskFlow API
 
-![Backend Tests](https://github.com/abdellahsif/edl-starter/workflows/Backend%20Tests/badge.svg)
-![Frontend Tests](https://github.com/abdellahsif/edl-starter/workflows/Frontend%20Tests/badge.svg)
-![CI Pipeline](https://github.com/abdellahsif/edl-starter/workflows/CI%20Pipeline/badge.svg)
-
 Service backend FastAPI avec stockage progressif :
 - **Atelier 1-2** : Stockage en mémoire (dictionnaire Python simple)
 - **Atelier 3** : Migration vers PostgreSQL pour la persistance
