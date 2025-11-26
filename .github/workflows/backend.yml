@@ -32,4 +32,4 @@ jobs:
       # TODO : Lancez les tests
       - name: Run tests
         run: |
-          cd backend && uv test
+          cd backend && uv run pytest -v --cov
