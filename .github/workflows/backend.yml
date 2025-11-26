@@ -2,7 +2,10 @@ name: Backend Tests
 
 on:
   push:
-    branches: [main, 'feature/test-branch-protection']
+    branches: [main,'feature/test-branch-protection']
+  pull_request:  # ✨ Nouveau !
+    branches: [main]
+  workflow_call:  # ✨ Nouveau !
 
 jobs:
   test:
