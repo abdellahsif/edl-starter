@@ -368,8 +368,6 @@ RAPPELEZ-VOUS :
 def test_health_check(client):
     response = client.get("/health")
     assert response.status_code == 200
-    assert response.json()["status"] == "healthy"  # ✅ Correct
-
-
+    assert response.json()["status"] == "healthy"  # ✅ Correct 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
